@@ -5,7 +5,7 @@
         scrobble: {
             artist: '',
             track: '',
-            timestamp: '',
+            timestamp: Math.floor(Date.now() / 1000),
             album: ''
         }
     }
@@ -24,7 +24,7 @@
             scrobble: {
                 artist: '',
                 track: '',
-                timestamp: '',
+                timestamp: Math.floor(Date.now() / 1000),
                 album: ''
             }
         };
@@ -62,7 +62,7 @@
 
                 scrobbler_status.logged = true;
             }
-            console.log(scrobbler_status, scrobbler_status.scrobble);
+            //console.log(scrobbler_status, scrobbler_status.scrobble);
         })
     });
     observer_prg.observe(target_prg, { attributes: true });
