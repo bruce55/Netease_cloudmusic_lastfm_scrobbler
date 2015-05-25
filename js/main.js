@@ -44,6 +44,29 @@
             getAlbum(id, function(album) {
                 scrobbler_status.scrobble.album = album;
                 scrobbler_status.ready = true;
+
+                var method = 'track.updateNowPlaying';
+                var song_info = scrobbler_status.scrobble;
+                var request = new XMLHttpRequest();
+                request.onreadystatechange = function () {
+                    if (request.readyState == 4 && request.status == 200) {
+                        console.log(request.responseText);
+                    }
+                }
+                var url = api_info.baseurl + '?format=json';
+                var params = {
+                    'album': song_info.album,
+                    'api_key': api_info.api_key,
+                    'artist': song_info.artist,
+                    'method': method,
+                    'sk': api_info.session_key,
+                    'track': song_info.track
+                }
+                var sig = getSig(params);
+                var data = paramsEncode(params, sig);
+                request.open('POST', url, true);
+                request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                request.send(data);
             })
         });
     });
