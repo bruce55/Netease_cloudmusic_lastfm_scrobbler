@@ -15,6 +15,7 @@
             artist: '',
             track: '',
             timestamp: Math.floor(Date.now() / 1000),
+            duration: 0,
             album: ''
         }
     };
@@ -25,8 +26,9 @@
         scrobbler_status.scrobble.artist = target_song.childNodes[5].childNodes[1].firstChild.nodeValue;
         var id = target_song.childNodes[7].childNodes[1].getAttribute('data-res-id');
         if (id) {
-            getAlbum(id, function (album) {
+            getAlbum(id, function (album, duration) {
                 scrobbler_status.scrobble.album = album;
+                scrobbler_status.scrobble.duration = duration;
                 scrobbler_status.ready = true;
             });
         }
@@ -41,6 +43,7 @@
                 artist: '',
                 track: '',
                 timestamp: Math.floor(Date.now() / 1000),
+                duration: 0,
                 album: ''
             }
         };
@@ -48,8 +51,9 @@
             scrobbler_status.scrobble.track = mutation.addedNodes[3].firstChild.firstChild.nodeValue;
             scrobbler_status.scrobble.artist = mutation.addedNodes[5].childNodes[1].firstChild.nodeValue;
             var id = mutation.addedNodes[7].childNodes[1].getAttribute('data-res-id');
-            getAlbum(id, function (album) {
+            getAlbum(id, function (album, duration) {
                 scrobbler_status.scrobble.album = album;
+                scrobbler_status.scrobble.duration = duration;
                 scrobbler_status.logging = true;
                 var method = 'track.updateNowPlaying';
                 
@@ -57,6 +61,7 @@
                     'album': scrobbler_status.scrobble.album,
                     'api_key': api_info.api_key,
                     'artist': scrobbler_status.scrobble.artist,
+                    'duration': scrobbler_status.scrobble.duration,
                     'method': method,
                     'sk': api_info.session_key,
                     'track': scrobbler_status.scrobble.track
@@ -84,6 +89,7 @@
                         'album': scrobbler_status.scrobble.album,
                         'api_key': api_info.api_key,
                         'artist': scrobbler_status.scrobble.artist,
+                        'duration': scrobbler_status.scrobble.duration,
                         'method': method,
                         'sk': api_info.session_key,
                         'timestamp': scrobbler_status.scrobble.timestamp,
@@ -122,11 +128,11 @@
         var request = new XMLHttpRequest();
         request.onreadystatechange = function () {
             if (request.readyState == 4 && request.status == 200) {
-                var ablum = request.responseText.match(/所属专辑.+"s-fc7">(.+?)</)[1];
-                cb(ablum);
+                var response = JSON.parse(request.responseText);
+                cb(response.songs[0].album.name, Math.floor(response.songs[0].duration / 1000));
             }
         }
-        var url = 'http://music.163.com/song?id=' + id;
+        var url = 'http://music.163.com/api/song/detail/?id=' + id + '&ids=%5B' + id + '%5D';
         request.open('GET', url, true);
         request.send();
     }
