@@ -1,4 +1,5 @@
 (function () {
+    //Configure your session info manually here
     var api_info = {
         baseurl: 'http://ws.audioscrobbler.com/2.0/',
         api_key: '81a380cb10147c1945f018e65950f379',
@@ -19,7 +20,7 @@
             album: ''
         }
     };
-    
+
     var target_song = document.querySelector('div.m-pinfo > div');
     if (target_song.childNodes[3]) {
         scrobbler_status.scrobble.track = target_song.childNodes[3].firstChild.firstChild.nodeValue;
@@ -56,7 +57,7 @@
                 scrobbler_status.scrobble.duration = duration;
                 scrobbler_status.logging = true;
                 var method = 'track.updateNowPlaying';
-                
+
                 var params = {
                     'album': scrobbler_status.scrobble.album,
                     'api_key': api_info.api_key,
@@ -66,11 +67,11 @@
                     'sk': api_info.session_key,
                     'track': scrobbler_status.scrobble.track
                 }
-                postRequest(params, function(request) {
+                postRequest(params, function (request) {
                     scrobbler_status.logging = false;
                     console.log(request.responseText);
                 });
-                
+
                 scrobbler_status.ready = true;
             })
         });
@@ -78,11 +79,13 @@
     observer_song.observe(target_song, { childList: true });
 
     var target_prg = document.querySelector('.prg > .has');
+    var target_playtime = document.querySelector('time.now');
     var observer_prg = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
             var prg = target_prg.getAttribute('style').slice(7, -2);
+            var playtime = target_playtime.innerText.match(/\d*(?=:)/)[0];
             if (scrobbler_status.ready && !scrobbler_status.logging) {
-                if (prg > 50 && !scrobbler_status.logged) {
+                if ((prg > scrobble_progress || playtime >= scrobble_time) && !scrobbler_status.logged) {
                     scrobbler_status.logging = true;
                     var method = 'track.scrobble';
                     var params = {
