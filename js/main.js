@@ -7,6 +7,11 @@
         token: '',
         session_key: ''
     };
+
+    //Scrobbler settings. Default: when the progress bar goes over 50 percent, or when the play time exceeds 4 minutes.
+    var scrobble_progress = 50, //percent
+        scrobble_time = 4;      //minutes
+
     var scrobbler_status = {
         logged: true,
         logging: false,
@@ -69,7 +74,7 @@
                 }
                 postRequest(params, function (request) {
                     scrobbler_status.logging = false;
-                    console.log(request.responseText);
+                    console.log('Request response:\n' + JSON.stringify(JSON.parse(request.responseText), null, '\t'));
                 });
 
                 scrobbler_status.ready = true;
@@ -101,7 +106,7 @@
                     postRequest(params, function (request) {
                         scrobbler_status.logged = true;
                         scrobbler_status.logging = false;
-                        console.log(request.responseText);
+                        console.log('Request response:\n' + JSON.stringify(JSON.parse(request.responseText), null, '\t'));
                     })
                 }
                 var target_love = document.querySelector('div.m-pinfo > div > span');
@@ -504,7 +509,7 @@
         }
         keys.sort();
         var sig = keys.join('') + api_info.secret;
-        console.log(sig);
+        console.log('Generated api_sig:', sig);
         var sig_hashed = calcMd5(sig);
         return sig_hashed;
     }
@@ -519,7 +524,7 @@
         data += 'api_sig=' + sig;
         return data;
     }
-    function postRequest(params,cb) {
+    function postRequest(params, cb) {
         var url = api_info.baseurl + '?format=json';
         var request = new XMLHttpRequest();
         request.onreadystatechange = function () {
@@ -535,6 +540,6 @@
     }
 
     function logResponse(request) {
-        console.log(request.responseText);
+        console.log('Request response:\n' + JSON.stringify(JSON.parse(request.responseText), null, '\t'));
     }
 })();
