@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>云音乐 + Last.fm</title>
+
+    <link rel="stylesheet" href="Content/bootstrap.css" media="all" />
+    <link rel="stylesheet" href="Content/bootstrap-theme.css" media="all"/>
+    <link rel="stylesheet" href="web_injection/style.css" media="all" />
+
+    <script src="Scripts/jquery-1.9.1.js"></script>
+    <script src="Scripts/bootstrap.js"></script>
+    <script src="web_injection/script.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-inverse cm-nav">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">云音乐 + Last.fm</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="https://github.com/bruce55/Netease_cloudmusic_lastfm_scrobbler">Github</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+<div class="cm-head">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-3">
+                <img src="web_injection/cloud-logo.png" class="img-responsive"/>
+            </div>
+            <div class="col-md-5">
+                <h1>Session Info:</h1>
+                <form>
+                    <div class="form-group">
+                        <label for="tokenInput">Token</label>
+                        <input type="text" class="form-control" id="tokenInput" placeholder="Enter token">
+                    </div>
+                    <div class="form-group">
+                        <label for="skInput">Session key</label>
+                        <input type="text" class="form-control" id="skInput" placeholder="Enter session key">
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+            </div>
+
+        </div>
+    </div></div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+﻿body {
+    background-color: #222222;
+}
+
+.cm-nav {
+    margin-bottom: 0;
+}
+.cm-head {
+    background: radial-gradient(ellipse at center, rgba(143,2,34,1) 0%, rgba(143,2,34,1) 48%, rgba(109,0,25,1) 100%);
+    padding: 5em 0;
+    color: #FFF;
+}
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+.cm-logo {
+    white-space: nowrap;
+    text-align: center; margin: 1em 0;
+}
