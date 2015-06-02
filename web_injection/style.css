@@ -29,6 +29,10 @@
     color: #BBB;
 }
 
+.cm-content img {
+    margin: 20px 0;
+}
+
 .cm-success {
     position: absolute;
     width: 30em;

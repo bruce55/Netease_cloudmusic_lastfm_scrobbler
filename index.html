@@ -71,43 +71,48 @@
             </div>
         </div>
     </div>
-<div class="modal fade" id="localFrame" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Get debugging URL</h4>
-            </div>
-            <div class="modal-body">
-                <form id="getPortForm">
-                    <div class="form-group">
-                        <label for="addrInput">Debugging Port</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="portInput" name="port" placeholder="Enter debugging port here">
-                            <span class="input-group-btn">
+    <div class="modal fade" id="localFrame" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Get debugging URL</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="getPortForm">
+                        <div class="form-group">
+                            <label for="addrInput">Debugging Port</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="portInput" name="port" placeholder="Enter debugging port here">
+                                <span class="input-group-btn">
                                     <button class="btn btn-default" type="submit">Get</button>
                                 </span>
+                            </div>
                         </div>
+                    </form>
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe class="embed-responsive-item" src="" id="getAddrIF"></iframe>
                     </div>
-                </form>
-                <div class="embed-responsive embed-responsive-16by9">
-                    <iframe class="embed-responsive-item" src="" id="getAddrIF"></iframe>
+                    <p>Copy the string after ""webSocketDebuggerUrl":", which is started with "ws://localhost:...", without quotation marks and paste into the Debugging Address input box.</p>
                 </div>
-                <p>Copy the string after ""webSocketDebuggerUrl":", which is started with "ws://localhost:...", without quotation marks and paste into the Debugging Address input box.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="alert alert-success cm-success" role="alert">已尝试插入，如过插入成功，云音乐窗口内将显示“脚本注入成功”的提示</div>
+    <div class="alert alert-success cm-success" role="alert">已尝试插入，如过插入成功，云音乐窗口内将显示“脚本注入成功”的提示</div>
 
-<div class="container cm-content">
-    <h2>使用方法</h2>
-    <p>找到云音乐的快捷方式，右键属性，在目标最后面加入“/remote-debugging-port=[端口号]”（不含引号）。端口号可以任选没有被占用的端口，比如2015。</p>
-    <p>启动或重启网易云音乐，点击本页Debugging Address右边的Get，填入设置的端口号，点击Get，复制最后面“ws://localhost:...”打头的字符串，不含引号，填入Debugging Address。</p>
-    <p>如过先前曾经尝试插入过，Token和Session Key将会被保存。如过您是新用户或者需要重新认证，点击Auth按钮可以进行web认证。</p>
-</div>
+    <div class="container cm-content">
+        <div class="row">
+            <div class="col-md-7">
+                <h3>使用方法</h3>
+                <p>找到云音乐的快捷方式，右键属性，在目标最后面加入“/remote-debugging-port=[端口号]”（不含引号）。端口号可以任选没有被占用的端口，比如2015。</p>
+                <p>启动或重启网易云音乐，点击本页Debugging Address右边的Get，填入设置的端口号，点击Get，复制最后面“ws://localhost:...”打头的字符串，不含引号，填入Debugging Address。</p>
+                <p>如过先前曾经尝试插入过，Token和Session Key将会被保存。如过您是新用户或者需要重新认证，点击Auth按钮可以进行web认证。</p>
+            </div>
+            <img src="web_injection/wyy.png" alt="" class="pull-right col-md-5 img-responsive" />
+        </div>
+    </div>
 </body>
 </html>
