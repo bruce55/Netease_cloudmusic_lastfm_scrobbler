@@ -4,12 +4,16 @@
 
 .cm-nav {
     margin-bottom: 0;
+    border: 0;
+    border-radius: 0;
 }
+
 .cm-head {
     background: radial-gradient(ellipse at center, rgba(143,2,34,1) 0%, rgba(143,2,34,1) 48%, rgba(109,0,25,1) 100%);
     padding: 5em 0;
     color: #FFF;
 }
+
 .helper {
     display: inline-block;
     height: 100%;
@@ -21,4 +25,8 @@
     background: url('cloud-logo.png') no-repeat;
     background-size: contain;
     background-position: center center;
+}
+
+.cm-content {
+    color: #BBB;
 }
