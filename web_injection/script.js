@@ -13,7 +13,7 @@
             apiInfo[item.name] = item.value;
         });
         console.log(apiInfo);
-        if (apiInfo.token && apiInfo.sk $$ apiInfo.address) {
+        if (apiInfo.token && apiInfo.sk && apiInfo.address) {
             localStorage.apiInfo = JSON.stringify({
                 "token": apiInfo.token,
                 "sk": apiInfo.sk
