@@ -12,21 +12,27 @@
             "sk": apiInfo.sk
         });
         
-        $.get("js/main.min.js", function (data) {
-            var script = data;
-            data = data.replace("token:\"\",", "token:\"" + apiInfo.token + "\",");
-            data = data.replace("session_key:\"\"", "session_key:\"" + apiInfo.sk + "\"");
-            var connection = new WebSocket(apiInfo.address);
-            connection.onopen = function() {
-                connection.send(JSON.stringify({
-                    "id": 0,
-                    "method": "Runtime.evaluate",
-                    "params": {
-                        "expression": data
-                    }
-                }));
-            };
-        },"text");
+        $.ajax({
+            url: "js/main.min.js",
+            success: function (data) {
+                var script = data;
+                data = data.replace("token:\"\",", "token:\"" + apiInfo.token + "\",");
+                data = data.replace("session_key:\"\"", "session_key:\"" + apiInfo.sk + "\"");
+                console.log(data);
+                var connection = new WebSocket(apiInfo.address);
+                connection.onopen = function () {
+                    connection.send(JSON.stringify({
+                        "id": 0,
+                        "method": "Runtime.evaluate",
+                        "params": {
+                            "expression": data
+                        }
+                    }));
+                };
+            },
+            dataType: "text",
+            cache: false
+        });
 
     });
     $("#getPortForm").submit(function (e) {

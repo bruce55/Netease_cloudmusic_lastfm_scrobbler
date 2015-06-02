@@ -1,4 +1,10 @@
-(function () {
+﻿(function () {
+    var insertElement = document.createElement("div");
+    insertElement.innerHTML = "<table class=\"m-center\"><tbody><tr><td><div class=\"u-result centeritem j-tips\" stype=\"padding: 25px;\"><i class=\"icon true\"></i><span class=\"u-tit f-ff2\">脚本注入成功</span></div></td></tr></tbody></table>";
+    document.querySelector("body").appendChild(insertElement.firstChild);
+    setTimeout(function() {
+        document.querySelector("body").removeChild(document.querySelector(".m-center"));
+    }, 10000);
     //Configure your session info manually here
     var apiInfo = {
         baseurl: "http://ws.audioscrobbler.com/2.0/",
@@ -26,7 +32,7 @@
         }
     };
 
-    var target_song = document.querySelector("div.m-pinfo > div");
+    var targetSong = document.querySelector("div.m-pinfo > div");
 
     function getAlbum(id, cb) {
         var request = new XMLHttpRequest();
@@ -41,10 +47,10 @@
         request.send();
     }
 
-    if (target_song.childNodes[3]) {
-        scrobblerStatus.scrobble.track = target_song.childNodes[3].firstChild.firstChild.nodeValue;
-        scrobblerStatus.scrobble.artist = target_song.childNodes[5].childNodes[1].firstChild.nodeValue;
-        var id = target_song.childNodes[7].childNodes[1].getAttribute("data-res-id");
+    if (targetSong.childNodes[3]) {
+        scrobblerStatus.scrobble.track = targetSong.childNodes[3].firstChild.firstChild.nodeValue;
+        scrobblerStatus.scrobble.artist = targetSong.childNodes[5].childNodes[1].firstChild.nodeValue;
+        var id = targetSong.childNodes[7].childNodes[1].getAttribute("data-res-id");
         if (id) {
             getAlbum(id, function (album, duration) {
                 scrobblerStatus.scrobble.album = album;
@@ -53,120 +59,6 @@
             });
         }
     }
-
-    function postRequest(params, cb) {
-        var url = apiInfo.baseurl + "?format=json";
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (request.readyState == 4 && request.status == 200) {
-                cb(request);
-            }
-        }
-        var sig = getSig(params);
-        var data = paramsEncode(params, sig);
-        request.open("POST", url, true);
-        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        request.send(data);
-    }
-
-    var observerSong = new MutationObserver(function (mutations) {
-        scrobblerStatus = {
-            logged: false,
-            logging: false,
-            ready: false,
-            love: false,
-            scrobble: {
-                artist: "",
-                track: "",
-                timestamp: Math.floor(Date.now() / 1000),
-                duration: 0,
-                album: ""
-            }
-        };
-        mutations.forEach(function (mutation) {
-            scrobblerStatus.scrobble.track = mutation.addedNodes[3].firstChild.firstChild.nodeValue;
-            scrobblerStatus.scrobble.artist = mutation.addedNodes[5].childNodes[1].firstChild.nodeValue;
-            var id = mutation.addedNodes[7].childNodes[1].getAttribute("data-res-id");
-            getAlbum(id, function(album, duration) {
-                scrobblerStatus.scrobble.album = album;
-                scrobblerStatus.scrobble.duration = duration;
-                scrobblerStatus.logging = true;
-                var method = "track.updateNowPlaying";
-
-                var params = {
-                    'album': scrobblerStatus.scrobble.album,
-                    'api_key': apiInfo.api_key,
-                    'artist': scrobblerStatus.scrobble.artist,
-                    'duration': scrobblerStatus.scrobble.duration,
-                    'method': method,
-                    'sk': apiInfo.session_key,
-                    'track': scrobblerStatus.scrobble.track
-                }
-                postRequest(params, function(request) {
-                    scrobblerStatus.logging = false;
-                    console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
-                });
-
-                scrobblerStatus.ready = true;
-            });
-        });
-    });
-    observerSong.observe(target_song, { childList: true });
-
-    var targetPrg = document.querySelector(".prg > .has");
-    var targetPlaytime = document.querySelector("time.now");
-
-    function logResponse(request) {
-        console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
-    }
-
-    var observerPrg = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-            var prg = targetPrg.getAttribute("style").slice(7, -2);
-            var playtime = targetPlaytime.innerText.match(/\d*(?=:)/)[0];
-            if (scrobblerStatus.ready && !scrobblerStatus.logging) {
-                var method;
-                if ((prg > scrobbleProgress || playtime >= scrobbleTime) && !scrobblerStatus.logged) {
-                    scrobblerStatus.logging = true;
-                    method = "track.scrobble";
-                    var params = {
-                        'album': scrobblerStatus.scrobble.album,
-                        'api_key': apiInfo.api_key,
-                        'artist': scrobblerStatus.scrobble.artist,
-                        'duration': scrobblerStatus.scrobble.duration,
-                        'method': method,
-                        'sk': apiInfo.session_key,
-                        'timestamp': scrobblerStatus.scrobble.timestamp,
-                        'track': scrobblerStatus.scrobble.track
-                    }
-                    postRequest(params, function(request) {
-                        scrobblerStatus.logged = true;
-                        scrobblerStatus.logging = false;
-                        console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
-                    });
-                }
-                var targetLove = document.querySelector("div.m-pinfo > div > span");
-                if ((!scrobblerStatus.love && targetLove.classList.contains("z-show1")) || (scrobblerStatus.love && !targetLove.classList.contains("z-show1"))) {
-                    if (scrobblerStatus.love) {
-                        scrobblerStatus.love = false;
-                        method = "track.unlove";
-                    } else {
-                        scrobblerStatus.love = true;
-                        method = "track.love";
-                    }
-                    var paramsLove = {
-                        'api_key': apiInfo.api_key,
-                        'artist': scrobblerStatus.scrobble.artist,
-                        'method': method,
-                        'sk': apiInfo.session_key,
-                        'track': scrobblerStatus.scrobble.track
-                    };
-                    postRequest(paramsLove, logResponse);
-                }
-            }
-        })
-    });
-    observerPrg.observe(targetPrg, { attributes: true });
 
     function getSig(params) {
         function calcMd5(str) {
@@ -242,7 +134,7 @@
                 for (var i = 0; i < input.length; i++) {
                     x = input.charCodeAt(i);
                     output += hex_tab.charAt((x >>> 4) & 0x0F)
-                           + hex_tab.charAt(x & 0x0F);
+                        + hex_tab.charAt(x & 0x0F);
                 }
                 return output;
             }
@@ -257,8 +149,8 @@
                 var len = input.length;
                 for (var i = 0; i < len; i += 3) {
                     var triplet = (input.charCodeAt(i) << 16)
-                                | (i + 1 < len ? input.charCodeAt(i + 1) << 8 : 0)
-                                | (i + 2 < len ? input.charCodeAt(i + 2) : 0);
+                        | (i + 1 < len ? input.charCodeAt(i + 1) << 8 : 0)
+                        | (i + 2 < len ? input.charCodeAt(i + 2) : 0);
                     for (var j = 0; j < 4; j++) {
                         if (i * 8 + j * 6 > input.length * 8) output += b64pad;
                         else output += tab.charAt((triplet >>> 6 * (3 - j)) & 0x3F);
@@ -287,7 +179,7 @@
                  * use.
                  */
                 var full_length = Math.ceil(input.length * 8 /
-                                                  (Math.log(encoding.length) / Math.log(2)));
+                (Math.log(encoding.length) / Math.log(2)));
                 var remainders = Array(full_length);
                 for (j = 0; j < full_length; j++) {
                     quotient = Array();
@@ -334,16 +226,16 @@
                         output += String.fromCharCode(x);
                     else if (x <= 0x7FF)
                         output += String.fromCharCode(0xC0 | ((x >>> 6) & 0x1F),
-                                                      0x80 | (x & 0x3F));
+                            0x80 | (x & 0x3F));
                     else if (x <= 0xFFFF)
                         output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
-                                                      0x80 | ((x >>> 6) & 0x3F),
-                                                      0x80 | (x & 0x3F));
+                            0x80 | ((x >>> 6) & 0x3F),
+                            0x80 | (x & 0x3F));
                     else if (x <= 0x1FFFFF)
                         output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
-                                                      0x80 | ((x >>> 12) & 0x3F),
-                                                      0x80 | ((x >>> 6) & 0x3F),
-                                                      0x80 | (x & 0x3F));
+                            0x80 | ((x >>> 12) & 0x3F),
+                            0x80 | ((x >>> 6) & 0x3F),
+                            0x80 | (x & 0x3F));
                 }
                 return output;
             }
@@ -355,7 +247,7 @@
                 var output = "";
                 for (var i = 0; i < input.length; i++)
                     output += String.fromCharCode(input.charCodeAt(i) & 0xFF,
-                                                  (input.charCodeAt(i) >>> 8) & 0xFF);
+                    (input.charCodeAt(i) >>> 8) & 0xFF);
                 return output;
             }
 
@@ -363,7 +255,7 @@
                 var output = "";
                 for (var i = 0; i < input.length; i++)
                     output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
-                                                   input.charCodeAt(i) & 0xFF);
+                        input.charCodeAt(i) & 0xFF);
                 return output;
             }
 
@@ -547,4 +439,118 @@
         data += "api_sig=" + sig;
         return data;
     }
+
+    function postRequest(params, cb) {
+        var url = apiInfo.baseurl + "?format=json";
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (request.readyState == 4 && request.status == 200) {
+                cb(request);
+            }
+        }
+        var sig = getSig(params);
+        var data = paramsEncode(params, sig);
+        request.open("POST", url, true);
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.send(data);
+    }
+
+    var observerSong = new MutationObserver(function (mutations) {
+        scrobblerStatus = {
+            logged: false,
+            logging: false,
+            ready: false,
+            love: false,
+            scrobble: {
+                artist: "",
+                track: "",
+                timestamp: Math.floor(Date.now() / 1000),
+                duration: 0,
+                album: ""
+            }
+        };
+        mutations.forEach(function (mutation) {
+            scrobblerStatus.scrobble.track = mutation.addedNodes[3].firstChild.firstChild.nodeValue;
+            scrobblerStatus.scrobble.artist = mutation.addedNodes[5].childNodes[1].firstChild.nodeValue;
+            var id = mutation.addedNodes[7].childNodes[1].getAttribute("data-res-id");
+            getAlbum(id, function(album, duration) {
+                scrobblerStatus.scrobble.album = album;
+                scrobblerStatus.scrobble.duration = duration;
+                scrobblerStatus.logging = true;
+                var method = "track.updateNowPlaying";
+
+                var params = {
+                    'album': scrobblerStatus.scrobble.album,
+                    'api_key': apiInfo.api_key,
+                    'artist': scrobblerStatus.scrobble.artist,
+                    'duration': scrobblerStatus.scrobble.duration,
+                    'method': method,
+                    'sk': apiInfo.session_key,
+                    'track': scrobblerStatus.scrobble.track
+                }
+                postRequest(params, function(request) {
+                    scrobblerStatus.logging = false;
+                    console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
+                });
+
+                scrobblerStatus.ready = true;
+            });
+        });
+    });
+    observerSong.observe(targetSong, { childList: true });
+
+    var targetPrg = document.querySelector(".prg > .has");
+    var targetPlaytime = document.querySelector("time.now");
+
+    function logResponse(request) {
+        console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
+    }
+
+    var observerPrg = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            var prg = targetPrg.getAttribute("style").slice(7, -2);
+            var playtime = targetPlaytime.innerText.match(/\d*(?=:)/)[0];
+            if (scrobblerStatus.ready && !scrobblerStatus.logging) {
+                var method;
+                if ((prg > scrobbleProgress || playtime >= scrobbleTime) && !scrobblerStatus.logged) {
+                    scrobblerStatus.logging = true;
+                    method = "track.scrobble";
+                    var params = {
+                        'album': scrobblerStatus.scrobble.album,
+                        'api_key': apiInfo.api_key,
+                        'artist': scrobblerStatus.scrobble.artist,
+                        'duration': scrobblerStatus.scrobble.duration,
+                        'method': method,
+                        'sk': apiInfo.session_key,
+                        'timestamp': scrobblerStatus.scrobble.timestamp,
+                        'track': scrobblerStatus.scrobble.track
+                    }
+                    postRequest(params, function(request) {
+                        scrobblerStatus.logged = true;
+                        scrobblerStatus.logging = false;
+                        console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
+                    });
+                }
+                var targetLove = document.querySelector("div.m-pinfo > div > span");
+                if ((!scrobblerStatus.love && targetLove.classList.contains("z-show1")) || (scrobblerStatus.love && !targetLove.classList.contains("z-show1"))) {
+                    if (scrobblerStatus.love) {
+                        scrobblerStatus.love = false;
+                        method = "track.unlove";
+                    } else {
+                        scrobblerStatus.love = true;
+                        method = "track.love";
+                    }
+                    var paramsLove = {
+                        'api_key': apiInfo.api_key,
+                        'artist': scrobblerStatus.scrobble.artist,
+                        'method': method,
+                        'sk': apiInfo.session_key,
+                        'track': scrobblerStatus.scrobble.track
+                    };
+                    postRequest(paramsLove, logResponse);
+                }
+            }
+        })
+    });
+    observerPrg.observe(targetPrg, { attributes: true });
 })();
