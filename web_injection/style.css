@@ -1,5 +1,5 @@
 ﻿body {
-    background-color: #222222;
+    background-color: #151515;
 }
 
 .cm-nav {
@@ -14,10 +14,8 @@
     color: #FFF;
 }
 
-.helper {
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle;
+#apiForm .input-group-btn button {
+    width: 4em;
 }
 
 .cm-logo {

@@ -4,11 +4,12 @@
         api_key: "81a380cb10147c1945f018e65950f379",
         secret: "3a34f3ad0dbce62de7989abf41a5973b"
     };
+
     $("#apiForm").submit(function (e) {
         e.preventDefault();
         var form = $(this).serializeArray();
         var apiInfo = {};
-        form.forEach(function(item) {
+        form.forEach(function (item) {
             apiInfo[item.name] = item.value;
         });
         console.log(apiInfo);
@@ -16,7 +17,7 @@
             "token": apiInfo.token,
             "sk": apiInfo.sk
         });
-        
+
         $.ajax({
             url: "js/main.min.js",
             success: function (data) {
@@ -47,7 +48,7 @@
         $("#getAddrIF").attr("src", "http://localhost:" + port + "/json");
     });
 
-    $("#authBtn").click(function() {
+    $("#authBtn").click(function () {
         window.location.href = "http://www.last.fm/api/auth/?api_key=" + apiInfo.api_key + "&cb=" + location.protocol + '//' + location.host + location.pathname + "?auth=1";
     });
 
@@ -60,6 +61,7 @@
         $("#portInput").val(localStorage.storedPort);
         $("#getPortForm").trigger("submit");
     }
+
     function getUrlParameter(sParam) {
         var sPageURL = window.location.search.substring(1);
         var sURLVariables = sPageURL.split('&');
@@ -70,6 +72,7 @@
             }
         }
     }
+
     function getSig(params) {
         function calcMd5(str) {
             /*
