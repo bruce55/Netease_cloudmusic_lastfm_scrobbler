@@ -1,6 +1,9 @@
 ﻿body {
     background-color: #151515;
 }
+iframe pre {
+    white-space: pre-wrap;
+}
 
 .cm-nav {
     margin-bottom: 0;
