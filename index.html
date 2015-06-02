@@ -1,14 +1,14 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>云音乐 + Last.fm</title>
 
     <link rel="stylesheet" href="Content/bootstrap.css" media="all" />
-    <link rel="stylesheet" href="Content/bootstrap-theme.css" media="all"/>
+    <link rel="stylesheet" href="Content/bootstrap-theme.css" media="all" />
     <link rel="stylesheet" href="web_injection/style.css" media="all" />
 
-    <script src="Scripts/jquery-1.9.1.js"></script>
+    <script src="Scripts/jquery-2.1.4.js"></script>
     <script src="Scripts/bootstrap.js"></script>
     <script src="web_injection/script.js"></script>
 </head>
@@ -37,25 +37,64 @@
     <div class="container">
         <div class="row">
             <div class="col-md-2"></div>
-            <div class="col-md-3">
-                <img src="web_injection/cloud-logo.png" class="img-responsive"/>
+            <div class="col-md-3 cm-logo">
+
             </div>
             <div class="col-md-5">
                 <h1>Session Info:</h1>
-                <form>
+                <form id="apiForm">
+                    <div class="form-group">
+                        <label for="addrInput">Debugging Address</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="addrInput" name="address" placeholder="Press get to get the address">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" data-toggle="modal" data-target="#localFrame">Get</button>
+                                </span>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="tokenInput">Token</label>
-                        <input type="text" class="form-control" id="tokenInput" placeholder="Enter token">
+                        <input type="text" class="form-control" id="tokenInput" name="token" placeholder="Enter token" >
                     </div>
                     <div class="form-group">
                         <label for="skInput">Session key</label>
-                        <input type="text" class="form-control" id="skInput" placeholder="Enter session key">
+                        <input type="text" class="form-control" id="skInput" name="sk" placeholder="Enter session key">
                     </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
+                    <button type="submit" class="btn btn-default">Inject</button>
                 </form>
             </div>
-
         </div>
-    </div></div>
+    </div>
+</div>
+    <div class="modal fade" id="localFrame" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Get debugging URL</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="getPortForm">
+                        <div class="form-group">
+                            <label for="addrInput">Debugging Port</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="portInput" name="port" placeholder="Enter debugging port here">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">Get</button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe class="embed-responsive-item" src="" id="getAddrIF"></iframe>
+                    </div>
+                    <p>Copy the string after ""webSocketDebuggerUrl":", which is started with "ws://localhost:...", without quotation marks and paste into the Debugging Address input box.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
