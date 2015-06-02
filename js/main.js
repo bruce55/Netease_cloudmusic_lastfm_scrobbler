@@ -1,136 +1,32 @@
 (function () {
     //Configure your session info manually here
-    var api_info = {
-        baseurl: 'http://ws.audioscrobbler.com/2.0/',
-        api_key: '81a380cb10147c1945f018e65950f379',
-        secret: '3a34f3ad0dbce62de7989abf41a5973b',
-        token: '',
-        session_key: ''
+    var apiInfo = {
+        baseurl: "http://ws.audioscrobbler.com/2.0/",
+        api_key: "81a380cb10147c1945f018e65950f379",
+        secret: "3a34f3ad0dbce62de7989abf41a5973b",
+        token: "",
+        session_key: ""
     };
 
     //Scrobbler settings. Default: when the progress bar goes over 50 percent, or when the play time exceeds 4 minutes.
-    var scrobble_progress = 50, //percent
-        scrobble_time = 4;      //minutes
+    var scrobbleProgress = 50, //percent
+        scrobbleTime = 4;      //minutes
 
-    var scrobbler_status = {
+    var scrobblerStatus = {
         logged: true,
         logging: false,
         ready: false,
         love: false,
         scrobble: {
-            artist: '',
-            track: '',
+            artist: "",
+            track: "",
             timestamp: Math.floor(Date.now() / 1000),
             duration: 0,
-            album: ''
+            album: ""
         }
     };
 
-    var target_song = document.querySelector('div.m-pinfo > div');
-    if (target_song.childNodes[3]) {
-        scrobbler_status.scrobble.track = target_song.childNodes[3].firstChild.firstChild.nodeValue;
-        scrobbler_status.scrobble.artist = target_song.childNodes[5].childNodes[1].firstChild.nodeValue;
-        var id = target_song.childNodes[7].childNodes[1].getAttribute('data-res-id');
-        if (id) {
-            getAlbum(id, function (album, duration) {
-                scrobbler_status.scrobble.album = album;
-                scrobbler_status.scrobble.duration = duration;
-                scrobbler_status.ready = true;
-            });
-        }
-    }
-    var observer_song = new MutationObserver(function (mutations) {
-        scrobbler_status = {
-            logged: false,
-            logging: false,
-            ready: false,
-            love: false,
-            scrobble: {
-                artist: '',
-                track: '',
-                timestamp: Math.floor(Date.now() / 1000),
-                duration: 0,
-                album: ''
-            }
-        };
-        mutations.forEach(function (mutation) {
-            scrobbler_status.scrobble.track = mutation.addedNodes[3].firstChild.firstChild.nodeValue;
-            scrobbler_status.scrobble.artist = mutation.addedNodes[5].childNodes[1].firstChild.nodeValue;
-            var id = mutation.addedNodes[7].childNodes[1].getAttribute('data-res-id');
-            getAlbum(id, function (album, duration) {
-                scrobbler_status.scrobble.album = album;
-                scrobbler_status.scrobble.duration = duration;
-                scrobbler_status.logging = true;
-                var method = 'track.updateNowPlaying';
-
-                var params = {
-                    'album': scrobbler_status.scrobble.album,
-                    'api_key': api_info.api_key,
-                    'artist': scrobbler_status.scrobble.artist,
-                    'duration': scrobbler_status.scrobble.duration,
-                    'method': method,
-                    'sk': api_info.session_key,
-                    'track': scrobbler_status.scrobble.track
-                }
-                postRequest(params, function (request) {
-                    scrobbler_status.logging = false;
-                    console.log('Request response:\n' + JSON.stringify(JSON.parse(request.responseText), null, '\t'));
-                });
-
-                scrobbler_status.ready = true;
-            })
-        });
-    });
-    observer_song.observe(target_song, { childList: true });
-
-    var target_prg = document.querySelector('.prg > .has');
-    var target_playtime = document.querySelector('time.now');
-    var observer_prg = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-            var prg = target_prg.getAttribute('style').slice(7, -2);
-            var playtime = target_playtime.innerText.match(/\d*(?=:)/)[0];
-            if (scrobbler_status.ready && !scrobbler_status.logging) {
-                if ((prg > scrobble_progress || playtime >= scrobble_time) && !scrobbler_status.logged) {
-                    scrobbler_status.logging = true;
-                    var method = 'track.scrobble';
-                    var params = {
-                        'album': scrobbler_status.scrobble.album,
-                        'api_key': api_info.api_key,
-                        'artist': scrobbler_status.scrobble.artist,
-                        'duration': scrobbler_status.scrobble.duration,
-                        'method': method,
-                        'sk': api_info.session_key,
-                        'timestamp': scrobbler_status.scrobble.timestamp,
-                        'track': scrobbler_status.scrobble.track
-                    }
-                    postRequest(params, function (request) {
-                        scrobbler_status.logged = true;
-                        scrobbler_status.logging = false;
-                        console.log('Request response:\n' + JSON.stringify(JSON.parse(request.responseText), null, '\t'));
-                    })
-                }
-                var target_love = document.querySelector('div.m-pinfo > div > span');
-                if ((!scrobbler_status.love && target_love.classList.contains('z-show1')) || (scrobbler_status.love && !target_love.classList.contains('z-show1'))) {
-                    if (scrobbler_status.love) {
-                        scrobbler_status.love = false;
-                        var method = 'track.unlove';
-                    } else {
-                        scrobbler_status.love = true;
-                        var method = 'track.love';
-                    }
-                    var params_love = {
-                        'api_key': api_info.api_key,
-                        'artist': scrobbler_status.scrobble.artist,
-                        'method': method,
-                        'sk': api_info.session_key,
-                        'track': scrobbler_status.scrobble.track
-                    };
-                    postRequest(params_love, logResponse);
-                }
-            }
-        })
-    });
-    observer_prg.observe(target_prg, { attributes: true });
+    var target_song = document.querySelector("div.m-pinfo > div");
 
     function getAlbum(id, cb) {
         var request = new XMLHttpRequest();
@@ -140,10 +36,137 @@
                 cb(response.songs[0].album.name, Math.floor(response.songs[0].duration / 1000));
             }
         }
-        var url = 'http://music.163.com/api/song/detail/?id=' + id + '&ids=%5B' + id + '%5D';
-        request.open('GET', url, true);
+        var url = "http://music.163.com/api/song/detail/?id=" + id + "&ids=%5B" + id + "%5D";
+        request.open("GET", url, true);
         request.send();
     }
+
+    if (target_song.childNodes[3]) {
+        scrobblerStatus.scrobble.track = target_song.childNodes[3].firstChild.firstChild.nodeValue;
+        scrobblerStatus.scrobble.artist = target_song.childNodes[5].childNodes[1].firstChild.nodeValue;
+        var id = target_song.childNodes[7].childNodes[1].getAttribute("data-res-id");
+        if (id) {
+            getAlbum(id, function (album, duration) {
+                scrobblerStatus.scrobble.album = album;
+                scrobblerStatus.scrobble.duration = duration;
+                scrobblerStatus.ready = true;
+            });
+        }
+    }
+
+    function postRequest(params, cb) {
+        var url = apiInfo.baseurl + "?format=json";
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (request.readyState == 4 && request.status == 200) {
+                cb(request);
+            }
+        }
+        var sig = getSig(params);
+        var data = paramsEncode(params, sig);
+        request.open("POST", url, true);
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.send(data);
+    }
+
+    var observerSong = new MutationObserver(function (mutations) {
+        scrobblerStatus = {
+            logged: false,
+            logging: false,
+            ready: false,
+            love: false,
+            scrobble: {
+                artist: "",
+                track: "",
+                timestamp: Math.floor(Date.now() / 1000),
+                duration: 0,
+                album: ""
+            }
+        };
+        mutations.forEach(function (mutation) {
+            scrobblerStatus.scrobble.track = mutation.addedNodes[3].firstChild.firstChild.nodeValue;
+            scrobblerStatus.scrobble.artist = mutation.addedNodes[5].childNodes[1].firstChild.nodeValue;
+            var id = mutation.addedNodes[7].childNodes[1].getAttribute("data-res-id");
+            getAlbum(id, function(album, duration) {
+                scrobblerStatus.scrobble.album = album;
+                scrobblerStatus.scrobble.duration = duration;
+                scrobblerStatus.logging = true;
+                var method = "track.updateNowPlaying";
+
+                var params = {
+                    'album': scrobblerStatus.scrobble.album,
+                    'api_key': apiInfo.api_key,
+                    'artist': scrobblerStatus.scrobble.artist,
+                    'duration': scrobblerStatus.scrobble.duration,
+                    'method': method,
+                    'sk': apiInfo.session_key,
+                    'track': scrobblerStatus.scrobble.track
+                }
+                postRequest(params, function(request) {
+                    scrobblerStatus.logging = false;
+                    console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
+                });
+
+                scrobblerStatus.ready = true;
+            });
+        });
+    });
+    observerSong.observe(target_song, { childList: true });
+
+    var targetPrg = document.querySelector(".prg > .has");
+    var targetPlaytime = document.querySelector("time.now");
+
+    function logResponse(request) {
+        console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
+    }
+
+    var observerPrg = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            var prg = targetPrg.getAttribute("style").slice(7, -2);
+            var playtime = targetPlaytime.innerText.match(/\d*(?=:)/)[0];
+            if (scrobblerStatus.ready && !scrobblerStatus.logging) {
+                var method;
+                if ((prg > scrobbleProgress || playtime >= scrobbleTime) && !scrobblerStatus.logged) {
+                    scrobblerStatus.logging = true;
+                    method = "track.scrobble";
+                    var params = {
+                        'album': scrobblerStatus.scrobble.album,
+                        'api_key': apiInfo.api_key,
+                        'artist': scrobblerStatus.scrobble.artist,
+                        'duration': scrobblerStatus.scrobble.duration,
+                        'method': method,
+                        'sk': apiInfo.session_key,
+                        'timestamp': scrobblerStatus.scrobble.timestamp,
+                        'track': scrobblerStatus.scrobble.track
+                    }
+                    postRequest(params, function(request) {
+                        scrobblerStatus.logged = true;
+                        scrobblerStatus.logging = false;
+                        console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
+                    });
+                }
+                var targetLove = document.querySelector("div.m-pinfo > div > span");
+                if ((!scrobblerStatus.love && targetLove.classList.contains("z-show1")) || (scrobblerStatus.love && !targetLove.classList.contains("z-show1"))) {
+                    if (scrobblerStatus.love) {
+                        scrobblerStatus.love = false;
+                        method = "track.unlove";
+                    } else {
+                        scrobblerStatus.love = true;
+                        method = "track.love";
+                    }
+                    var paramsLove = {
+                        'api_key': apiInfo.api_key,
+                        'artist': scrobblerStatus.scrobble.artist,
+                        'method': method,
+                        'sk': apiInfo.session_key,
+                        'track': scrobblerStatus.scrobble.track
+                    };
+                    postRequest(paramsLove, logResponse);
+                }
+            }
+        })
+    });
+    observerPrg.observe(targetPrg, { attributes: true });
 
     function getSig(params) {
         function calcMd5(str) {
@@ -228,7 +251,7 @@
              * Convert a raw string to a base-64 string
              */
             function rstr2b64(input) {
-                try { b64pad } catch (e) { b64pad = ''; }
+                try { b64pad } catch (e) { b64pad = ""; }
                 var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
                 var output = "";
                 var len = input.length;
@@ -503,43 +526,25 @@
 
         var keys = [];
         for (var key in params) {
-            if (params[key]) {
+            if (params.hasOwnProperty(key)) {
                 keys.push(key + params[key]);
             }
         }
         keys.sort();
-        var sig = keys.join('') + api_info.secret;
-        console.log('Generated api_sig:', sig);
-        var sig_hashed = calcMd5(sig);
-        return sig_hashed;
+        var sig = keys.join("") + apiInfo.secret;
+        console.log("Generated api_sig:", sig);
+        var sigHashed = calcMd5(sig);
+        return sigHashed;
     }
 
     function paramsEncode(params, sig) {
-        var data = '';
+        var data = "";
         for (var key in params) {
-            if (params[key]) {
+            if (params.hasOwnProperty(key)) {
                 data += encodeURIComponent(key) + "=" + encodeURIComponent(params[key]) + "&";
             }
         }
-        data += 'api_sig=' + sig;
+        data += "api_sig=" + sig;
         return data;
-    }
-    function postRequest(params, cb) {
-        var url = api_info.baseurl + '?format=json';
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (request.readyState == 4 && request.status == 200) {
-                cb(request);
-            }
-        }
-        var sig = getSig(params);
-        var data = paramsEncode(params, sig);
-        request.open('POST', url, true);
-        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        request.send(data);
-    }
-
-    function logResponse(request) {
-        console.log('Request response:\n' + JSON.stringify(JSON.parse(request.responseText), null, '\t'));
     }
 })();

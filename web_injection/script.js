@@ -12,10 +12,10 @@
             "sk": apiInfo.sk
         });
         
-        $.get("js/main.js", function (data) {
+        $.get("js/main.min.js", function (data) {
             var script = data;
-            data = data.replace("token: '',", "token: '" + apiInfo.token + "',");
-            data = data.replace("session_key: ''", "session_key: '" + apiInfo.sk + "'");
+            data = data.replace("token:\"\",", "token:\"" + apiInfo.token + "\",");
+            data = data.replace("session_key:\"\"", "session_key:\"" + apiInfo.sk + "\"");
             var connection = new WebSocket(apiInfo.address);
             connection.onopen = function() {
                 connection.send(JSON.stringify({
