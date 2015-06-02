@@ -48,11 +48,15 @@
         e.preventDefault();
         var port = $("#portInput").val();
         localStorage.storedPort = port;
-        $("#getAddrIF").attr("src", "http://localhost:" + port + "/json");
     });
 
     $("#authBtn").click(function () {
         window.location.href = "http://www.last.fm/api/auth/?api_key=" + apiInfo.api_key + "&cb=" + location.protocol + '//' + location.host + location.pathname + "?auth=1";
+    });
+
+    $("#getBtn").click(function () {
+        var port = $("#portInput").val();
+        $("#getAddrIF").attr("src", "http://localhost:" + port + "/json");
     });
 
     if (localStorage.apiInfo) {
