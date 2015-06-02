@@ -15,7 +15,10 @@
     height: 100%;
     vertical-align: middle;
 }
+
 .cm-logo {
-    white-space: nowrap;
-    text-align: center; margin: 1em 0;
+    height: 22em;
+    background: url('cloud-logo.png') no-repeat;
+    background-size: contain;
+    background-position: center center;
 }
