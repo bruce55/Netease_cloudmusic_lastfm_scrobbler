@@ -13,32 +13,35 @@
             apiInfo[item.name] = item.value;
         });
         console.log(apiInfo);
-        localStorage.apiInfo = JSON.stringify({
-            "token": apiInfo.token,
-            "sk": apiInfo.sk
-        });
+        if (apiInfo.token && apiInfo.sk $$ apiInfo.address) {
+            localStorage.apiInfo = JSON.stringify({
+                "token": apiInfo.token,
+                "sk": apiInfo.sk
+            });
 
-        $.ajax({
-            url: "js/main.min.js",
-            success: function (data) {
-                var script = data;
-                data = data.replace("token:\"\",", "token:\"" + apiInfo.token + "\",");
-                data = data.replace("session_key:\"\"", "session_key:\"" + apiInfo.sk + "\"");
-                console.log(data);
-                var connection = new WebSocket(apiInfo.address);
-                connection.onopen = function () {
-                    connection.send(JSON.stringify({
-                        "id": 0,
-                        "method": "Runtime.evaluate",
-                        "params": {
-                            "expression": data
-                        }
-                    }));
-                };
-            },
-            dataType: "text",
-            cache: false
-        });
+            $.ajax({
+                url: "js/main.min.js",
+                success: function (data) {
+                    var script = data;
+                    data = data.replace("token:\"\",", "token:\"" + apiInfo.token + "\",");
+                    data = data.replace("session_key:\"\"", "session_key:\"" + apiInfo.sk + "\"");
+                    console.log(data);
+                    var connection = new WebSocket(apiInfo.address);
+                    connection.onopen = function () {
+                        connection.send(JSON.stringify({
+                            "id": 0,
+                            "method": "Runtime.evaluate",
+                            "params": {
+                                "expression": data
+                            }
+                        }));
+                        $(".cm-success").show(200).delay(10000).hide(200);
+                    };
+                },
+                dataType: "text",
+                cache: false
+            });
+        }
     });
 
     $("#getPortForm").submit(function (e) {

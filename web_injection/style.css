@@ -28,3 +28,12 @@
 .cm-content {
     color: #BBB;
 }
+
+.cm-success {
+    position: absolute;
+    width: 30em;
+    left: 50%;
+    top: 70px;
+    margin-left: -15em;
+    display: none;
+}
