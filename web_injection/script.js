@@ -48,6 +48,7 @@
         e.preventDefault();
         var port = $("#portInput").val();
         localStorage.storedPort = port;
+        $("#getAddrIF").attr("src", "http://localhost:" + port + "/json");
     });
 
     $("#authBtn").click(function () {
