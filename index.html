@@ -44,15 +44,6 @@
                     <h1>Session Info:</h1>
                     <form id="apiForm">
                         <div class="form-group">
-                            <label for="addrInput">Debugging Address</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="addrInput" name="address" placeholder="Press get to get the address">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" data-toggle="modal" data-target="#localFrame" id="getBtn">Get</button>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label for="tokenInput">Token</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="tokenInput" name="token" placeholder="Enter token">
@@ -64,6 +55,15 @@
                         <div class="form-group">
                             <label for="skInput">Session key</label>
                             <input type="text" class="form-control" id="skInput" name="sk" placeholder="Enter session key">
+                        </div>
+                        <div class="form-group">
+                            <label for="addrInput">Debugging Address</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="addrInput" name="address" placeholder="Press get to get the address">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" data-toggle="modal" data-target="#localFrame" id="getBtn">Get</button>
+                                </span>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-default">Inject</button>
                     </form>
@@ -108,6 +108,7 @@
         <div class="row">
             <div class="col-md-7">
                 <h3>使用方法</h3>
+                <p>1.8似乎堵了Debugging，请用1.7或以下版本，太低的版本不保证能行。或者也可以把1.8安装包package文件夹内的skin和ntpk文件覆盖到1.7的目录下，不过也有崩溃的可能性。</p>
                 <p>找到云音乐的快捷方式，右键属性，在目标最后面加入“/remote-debugging-port=[端口号]”（不含引号）。端口号可以任选没有被占用的端口，比如2015。</p>
                 <p>启动或重启网易云音乐，点击本页Debugging Address右边的Get，填入设置的端口号，点击Get，复制最后面“ws://localhost:...”打头的字符串，不含引号，填入Debugging Address。</p>
                 <p>如过先前曾经尝试插入过，Token和Session Key将会被保存。如过您是新用户或者需要重新认证，点击Auth按钮可以进行web认证。</p>
