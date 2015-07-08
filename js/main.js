@@ -2,7 +2,7 @@
     var insertElement = document.createElement("div");
     insertElement.innerHTML = "<table class=\"m-center\"><tbody><tr><td><div class=\"u-result centeritem j-tips\" stype=\"padding: 25px;\"><i class=\"icon true\"></i><span class=\"u-tit f-ff2\">脚本注入成功</span></div></td></tr></tbody></table>";
     document.querySelector("body").appendChild(insertElement.firstChild);
-    setTimeout(function() {
+    setTimeout(function () {
         document.querySelector("body").removeChild(document.querySelector(".m-center"));
     }, 10000);
     //Configure your session info manually here
@@ -477,7 +477,7 @@
             scrobblerStatus.scrobble.track = mutation.addedNodes[3].firstChild.firstChild.nodeValue;
             scrobblerStatus.scrobble.artist = mutation.addedNodes[5].childNodes[1].firstChild.nodeValue;
             var id = mutation.addedNodes[7].childNodes[1].getAttribute("data-res-id");
-            getAlbum(id, function(album, duration) {
+            getAlbum(id, function (album, duration) {
                 scrobblerStatus.scrobble.album = album;
                 scrobblerStatus.scrobble.duration = duration;
                 scrobblerStatus.logging = true;
@@ -492,7 +492,7 @@
                     'sk': apiInfo.session_key,
                     'track': scrobblerStatus.scrobble.track
                 }
-                postRequest(params, function(request) {
+                postRequest(params, function (request) {
                     scrobblerStatus.logging = false;
                     console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
                 });
@@ -511,7 +511,7 @@
     }
 
     var observerPrg = new MutationObserver(function (mutations) {
-        mutations.forEach(function(mutation) {
+        mutations.forEach(function (mutation) {
             var prg = targetPrg.getAttribute("style").slice(7, -2);
             var playtime = targetPlaytime.innerText.match(/\d*(?=:)/)[0];
             if (scrobblerStatus.ready && !scrobblerStatus.logging) {
@@ -529,7 +529,7 @@
                         'timestamp': scrobblerStatus.scrobble.timestamp,
                         'track': scrobblerStatus.scrobble.track
                     }
-                    postRequest(params, function(request) {
+                    postRequest(params, function (request) {
                         scrobblerStatus.logged = true;
                         scrobblerStatus.logging = false;
                         console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
