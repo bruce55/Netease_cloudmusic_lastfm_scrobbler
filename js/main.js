@@ -35,16 +35,20 @@
     var targetSong = document.querySelector("div.m-pinfo > div");
 
     function getAlbum(id, cb) {
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (request.readyState == 4 && request.status == 200) {
-                var response = JSON.parse(request.responseText);
-                cb(response.songs[0].album.name, Math.floor(response.songs[0].duration / 1000));
+        if (id.length == 40) {
+            cb(null, null);
+        } else {
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (request.readyState == 4 && request.status == 200) {
+                    var response = JSON.parse(request.responseText);
+                    cb(response.songs[0].album.name, Math.floor(response.songs[0].duration / 1000));
+                }
             }
+            var url = "http://music.163.com/api/song/detail/?id=" + id + "&ids=%5B" + id + "%5D";
+            request.open("GET", url, true);
+            request.send();
         }
-        var url = "http://music.163.com/api/song/detail/?id=" + id + "&ids=%5B" + id + "%5D";
-        request.open("GET", url, true);
-        request.send();
     }
 
     if (targetSong.childNodes[3]) {
@@ -418,7 +422,7 @@
 
         var keys = [];
         for (var key in params) {
-            if (params.hasOwnProperty(key)) {
+            if (params.hasOwnProperty(key) && params[key]) {
                 keys.push(key + params[key]);
             }
         }
@@ -432,7 +436,7 @@
     function paramsEncode(params, sig) {
         var data = "";
         for (var key in params) {
-            if (params.hasOwnProperty(key)) {
+            if (params.hasOwnProperty(key) && params[key]) {
                 data += encodeURIComponent(key) + "=" + encodeURIComponent(params[key]) + "&";
             }
         }
@@ -507,7 +511,7 @@
     }
 
     var observerPrg = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
+        mutations.forEach(function(mutation) {
             var prg = targetPrg.getAttribute("style").slice(7, -2);
             var playtime = targetPlaytime.innerText.match(/\d*(?=:)/)[0];
             if (scrobblerStatus.ready && !scrobblerStatus.logging) {
@@ -550,7 +554,7 @@
                     postRequest(paramsLove, logResponse);
                 }
             }
-        })
+        });
     });
     observerPrg.observe(targetPrg, { attributes: true });
 })();
