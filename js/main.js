@@ -52,8 +52,8 @@
     }
 
     if (targetSong.childNodes[3]) {
-        scrobblerStatus.scrobble.track = targetSong.childNodes[3].firstChild.firstChild.nodeValue;
-        scrobblerStatus.scrobble.artist = targetSong.childNodes[5].childNodes[1].firstChild.nodeValue;
+        scrobblerStatus.scrobble.track = targetSong.childNodes[3].firstChild.firstChild.nodeValue.replace("\u00a0", " ");
+        scrobblerStatus.scrobble.artist = targetSong.childNodes[5].childNodes[1].firstChild.nodeValue.replace("\u00a0", " ");
         var id = targetSong.childNodes[7].childNodes[1].getAttribute("data-res-id");
         if (id) {
             getAlbum(id, function (album, duration) {
@@ -474,8 +474,8 @@
             }
         };
         mutations.forEach(function (mutation) {
-            scrobblerStatus.scrobble.track = mutation.addedNodes[3].firstChild.firstChild.nodeValue;
-            scrobblerStatus.scrobble.artist = mutation.addedNodes[5].childNodes[1].firstChild.nodeValue;
+            scrobblerStatus.scrobble.track = mutation.addedNodes[3].firstChild.firstChild.nodeValue.replace("\u00a0", " ");
+            scrobblerStatus.scrobble.artist = mutation.addedNodes[5].childNodes[1].firstChild.nodeValue.replace("\u00a0", " ");
             var id = mutation.addedNodes[7].childNodes[1].getAttribute("data-res-id");
             getAlbum(id, function (album, duration) {
                 scrobblerStatus.scrobble.album = album;
