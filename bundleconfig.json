@@ -1,0 +1,20 @@
+[
+  {
+    "outputFileName": "js/main.js",
+    "inputFiles": [
+      "js/main.js"
+    ]
+  },
+  {
+    "outputFileName": "web_injection/script.js",
+    "inputFiles": [
+      "web_injection/script.js"
+    ]
+  },
+  {
+    "outputFileName": "web_injection/style.css",
+    "inputFiles": [
+      "web_injection/style.css"
+    ]
+  }
+]
