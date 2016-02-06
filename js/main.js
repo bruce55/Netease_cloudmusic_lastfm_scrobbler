@@ -54,7 +54,7 @@
     if (targetSong.childNodes[3]) {
         scrobblerStatus.scrobble.track = targetSong.childNodes[3].firstChild.firstChild.nodeValue.replace(/\u00a0/g, " ");
         scrobblerStatus.scrobble.artist = targetSong.childNodes[5].childNodes[1].firstChild.nodeValue.replace(/\u00a0/g, " ");
-        var id = targetSong.childNodes[7].childNodes[1].getAttribute("data-res-id");
+        var id = targetSong.childNodes[7].getAttribute("data-res-id");
         if (id) {
             getAlbum(id, function (album, duration) {
                 scrobblerStatus.scrobble.album = album;
@@ -476,7 +476,7 @@
         mutations.forEach(function (mutation) {
             scrobblerStatus.scrobble.track = mutation.addedNodes[3].firstChild.firstChild.nodeValue.replace(/\u00a0/g, " ");
             scrobblerStatus.scrobble.artist = mutation.addedNodes[5].childNodes[1].firstChild.nodeValue.replace(/\u00a0/g, " ");
-            var id = mutation.addedNodes[7].childNodes[1].getAttribute("data-res-id");
+            var id = mutation.addedNodes[7].getAttribute("data-res-id");
             getAlbum(id, function (album, duration) {
                 scrobblerStatus.scrobble.album = album;
                 scrobblerStatus.scrobble.duration = duration;
@@ -503,8 +503,14 @@
     });
     observerSong.observe(targetSong, { childList: true });
 
-    var targetPrg = document.querySelector(".prg > .has");
-    var targetPlaytime = document.querySelector("time.now");
+    // FM Mode or not
+    if(document.querySelector(".m-player-fm").childNodes[1].getAttribute("data-action") == "pause") {
+        var targetPrg = document.querySelector(".m-player-fm > .prg > .has");
+        var targetPlaytime = document.querySelector(".m-player-fm > time.now");
+    } else {
+        var targetPrg = document.querySelector(".prg > .has");
+        var targetPlaytime = document.querySelector("time.now");
+    }
 
     function logResponse(request) {
         console.log("Request response:\n" + JSON.stringify(JSON.parse(request.responseText), null, "\t"));
